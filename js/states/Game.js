@@ -92,6 +92,7 @@ Game.prototype = {
 		//Si la vida llega a 0 debe mandar al state GameOver (1 punto)
 
 		//this.candies.events.onOutOfBounds.add(this.deleteCandy,this);
+		this.candies.forEach(this.deleteCandy,this);
 		if(this.player_lifes <= 0){
 			this.gameOver();
 		}
@@ -120,8 +121,11 @@ Game.prototype = {
 		sprite2.kill();
 	},
 	deleteCandy:function(candy){
-		this.player_lifes -=1;
-		candies.remove(candy);
+		if(candy.y > this.game.height){
+			this.player_lifes -=1;
+			this.candies.remove(candy);
+		}
+		
 	},
 	gameOver:function(){
 		this.state.start('GameOver');
