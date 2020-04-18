@@ -11,7 +11,7 @@ Preload.prototype = {
 	    this.scale.pageAlignVertically = true;
 
 	    //images
-	    this.load.image("background","assets/images/background-texture.png");
+	    this.load.image("background","assets/images/background.png");
 	    this.load.image("button-pause","assets/images/button-pause.png");
 	    this.load.image("floor","assets/images/floor.png");
 	    this.load.image("gameover","assets/images/gameover.png");
