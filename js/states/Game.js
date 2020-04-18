@@ -5,6 +5,7 @@ Game.prototype = {
 	create:function(){
 		//habilitar físicas
 		this.physics.startSystem(Phaser.Physics.ARCADE);
+		this.game.physics.setBoundsToWorld();
 		this.gravity = 250;
 
 		this.background = this.game.add.sprite(0,0,"background");
@@ -38,10 +39,14 @@ Game.prototype = {
 
 		this.candies = this.game.add.group();
 		this.candies.enableBody = true;
+		this.score = 0;
+
+		this.scoreText = this.game.add.text(this.game.world.centerX*1.5,100,this.score);
+		this.scoreText.fill = "#FFFFFF";
 
 		this.n_sprite = 0;
-
-		this.score = 0;
+		
+		this.player_lifes = 5;
 
 	},
 	createCandy:function(){
@@ -80,11 +85,16 @@ Game.prototype = {
 			this.actual_time = 0;
 		}
 
-		this.physics.arcade.overlap(this.character,this.candies,null,this.checkCollision,this);
+		this.physics.arcade.overlap(this.Monster,this.candies,null,this.checkCollision,this);
 
 		//Cuando los caramelos salgan del escenario deben eliminarse y el personaje pierde una vida (3 puntos)
 		//Debe utilizarse pool de objetos (3 puntos)
 		//Si la vida llega a 0 debe mandar al state GameOver (1 punto)
+
+		//this.candies.events.onOutOfBounds.add(this.deleteCandy,this);
+		if(this.player_lifes <= 0){
+			this.gameOver();
+		}
 	},
 	//devuelve los 2 elementos de la colisión
 	checkCollision:function(sprite1,sprite2){
@@ -93,11 +103,10 @@ Game.prototype = {
 			//Si es frame 1 gana 10 puntos
 			//Si es frame 3 gana 50 puntos
 			//Mostrar en consola el puntaje ganado
-		this.score += 2;
 		let score_temp = 2;
 		switch(this.n_sprite){
 			case 0, 2:
-			score_temp = (score_temp % 2 == 0) ? score_temp*5 : +5;
+			score_temp = (this.score % 2 == 0) ? score_temp*5 : +5;
 			break;
 			case 1:
 			score_temp += 10;
@@ -109,90 +118,12 @@ Game.prototype = {
 		console.log(score_temp);
 		this.score += score_temp;
 		sprite2.kill();
+	},
+	deleteCandy:function(candy){
+		this.player_lifes -=1;
+		candies.remove(candy);
+	},
+	gameOver:function(){
+		this.state.start('GameOver');
 	}
-	/*create:function(){
-		this.gravity = 500;
-		this.jumpForce = -400;
-
-		//habilitar físicas
-		this.physics.startSystem(Phaser.Physics.ARCADE);
-
-		//tileSprite (iniX,iniY,finX,finY,asset)
-		this.background = this.game.add.tileSprite(0,0,this.game.width,this.game.height,"background");
-
-		//autoScroll (velocidadX, velocidadY)
-		this.background.autoScroll(-100,0);
-
-		this.player = this.game.add.sprite(0,0,"player");
-		this.player.anchor.setTo(0.5);
-		this.player.x = this.game.world.centerX;
-		this.player.y = this.game.world.centerY;
-		this.player.animations.add("fly",[0,1,2],10,true);
-
-		this.game.physics.arcade.enable(this.player);
-		this.player.body.gravity.y = this.gravity;
-
-		this.spaceBar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-		this.spaceBar.onDown.add(this.flap,this);
-		this.game.input.onDown.add(this.flap,this);
-
-		this.walls = this.game.add.group();
-		this.spawnWall = 0;
-		this.score = 0;
-
-		this.scoreText = this.game.add.text(0,0,'Score :'+this.score);
-		this.scoreText.fill = "#FFFFFF";
-
-		this.maxScore = this.game.add.text(0,0,'Max Score');
-		this.maxScore.x = this.game.width - 150;
-		this.maxScore.fill = "#FFFFFF";
-	},
-	flap:function(){
-		this.player.body.velocity.y = this.jumpForce;
-	},
-	createWall:function(){
-		//integerInRange: random entre 2 valores 
-		let wallY = this.game.rnd.integerInRange(this.game.height*0.3,this.game.height*0.7);
-		this.generateWall(wallY);
-		this.generateWall(wallY,true);
-	},
-	generateWall:function(wallY,flipped){
-		let posY;
-		let opening = 400;
-		if(flipped){
-			wallY = wallY - (opening/2);
-		}else{
-			wallY = wallY + (opening/2);
-		}
-		let wall = this.walls.getFirstDead();
-		if(wall){
-			wall.reset(this.game.width, wallY);
-		}else{
-			wall = this.game.add.sprite(this.game.width,wallY,"wall");
-		}
-		this.game.physics.arcade.enable(wall);
-		wall.body.velocity.x = -200;
-		wall.body.inmovable = true;
-		wall.body.allowGravity = false;
-		this.walls.add(wall);
-		if(flipped){
-			wall.scale.y = -1;
-		}else{
-			wall.scale.y = 1;
-		}
-	},
-	update:function(){
-		this.spawnWall += this.game.time.elapsed;
-		if(this.spawnWall >3000){
-			this.spawnWall = 0;
-			this.createWall();
-		}
-		if(this.player.body.velocity.y > -20){
-			this.player.frame = 3;
-		}else{
-			this.player.animations.play("fly");
-		}
-	}*/
-
-		
 }

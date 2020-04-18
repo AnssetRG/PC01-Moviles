@@ -27,6 +27,6 @@ Preload.prototype = {
 	    this.load.spritesheet("button_start","assets/images/button-start.png",401,143,3);
 	},
 	create:function(){
-		this.state.start('Game');
+		this.state.start('Menu');
 	}
 }

@@ -12,8 +12,12 @@ GameOver.prototype = {
 		this.gameover.x = this.game.world.centerX;
 		this.gameover.y = this.game.world.centerY;
 
+
+		this.gameover.inputEnabled = true;
+		this.gameover.events.onInputDown.add(this.GoToMenu,this);
+
 	},
-	update:function(){
-		
+	GoToMenu:function(){
+		this.state.start('Menu');
 	}
 }
